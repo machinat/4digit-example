@@ -1,5 +1,6 @@
 import Machinat from '@machinat/core';
 import Http from '@machinat/http';
+import Script from '@machinat/script';
 import Messenger from '@machinat/messenger';
 import MessengerAuthorizer from '@machinat/messenger/webview';
 import Line from '@machinat/line';
@@ -10,6 +11,7 @@ import Webview from '@machinat/webview';
 import RedisState from '@machinat/redis-state';
 import { FileState } from '@machinat/local-state';
 import { ServerDomain, LineLiffId } from './interface';
+import FourDigitGame from './scenes/FourDigitGame';
 import nextConfigs from './webview/next.config.js';
 
 const {
@@ -57,6 +59,10 @@ const app = Machinat.createApp({
             url: REDIS_URL,
           },
         }),
+
+    Script.initModule({
+      libs: [FourDigitGame],
+    }),
   ],
 
   platforms: [

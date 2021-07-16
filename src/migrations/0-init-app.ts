@@ -19,7 +19,7 @@ export const up = makeContainer({
 })(async (messengerBot, telegramBot, lineBot) => {
   // setup page profile in Messenger
   await messengerBot.makeApiCall('POST', 'me/messenger_profile', {
-    greeting: [{ locale: 'default', text: 'Hello World!' }],
+    greeting: [{ locale: 'default', text: 'Guess 4 Digit' }],
     whitelisted_domains: [ENTRY_URL],
   });
 

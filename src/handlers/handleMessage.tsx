@@ -1,5 +1,5 @@
 import Machinat from '@machinat/core';
-import WithWebviewLink from '../components/WithWebviewLink';
+import RootMenu from '../components/RootMenu';
 import { ChatEventContext } from '../types';
 
 const handleMessage = async ({
@@ -7,9 +7,10 @@ const handleMessage = async ({
   reply,
 }: ChatEventContext & { event: { category: 'message' } }) => {
   await reply(
-    <WithWebviewLink>
-      Hello {event.type === 'text' ? event.text : 'World'}!
-    </WithWebviewLink>
+    <>
+      <p>Hello! I'm a 4digit game bot 🤖</p>
+      <RootMenu>Start a game now?</RootMenu>
+    </>
   );
 };
 
