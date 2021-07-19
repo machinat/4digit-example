@@ -15,7 +15,7 @@ const RootMenu = makeContainer({ deps: [ServerDomain, LineLiffId] })(
       const startLabel = 'Go 🔢';
       const startData = JSON.stringify({ type: 'start' });
 
-      const historyLabel = 'History 📑';
+      const recordsLabel = 'Records 📑';
 
       if (platform === 'messenger') {
         return (
@@ -28,7 +28,7 @@ const RootMenu = makeContainer({ deps: [ServerDomain, LineLiffId] })(
                 />
                 <Messenger.UrlButton
                   messengerExtensions
-                  title={historyLabel}
+                  title={recordsLabel}
                   url={`https://${serverDomain}/webview?platform=messenger`}
                 />
               </>
@@ -47,7 +47,7 @@ const RootMenu = makeContainer({ deps: [ServerDomain, LineLiffId] })(
                 <Telegram.CallbackButton text={startLabel} data={startData} />
                 <Telegram.UrlButton
                   login
-                  text={historyLabel}
+                  text={recordsLabel}
                   url={`https://${serverDomain}/auth/telegram`}
                 />
               </Telegram.InlineKeyboard>
@@ -66,7 +66,7 @@ const RootMenu = makeContainer({ deps: [ServerDomain, LineLiffId] })(
               <>
                 <Line.PostbackAction label={startLabel} data={startData} />
                 <Line.UriAction
-                  label={historyLabel}
+                  label={recordsLabel}
                   uri={`https://liff.line.me/${lineLiffId}`}
                 />
               </>

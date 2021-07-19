@@ -1,6 +1,6 @@
 import { makeContainer } from '@machinat/core/service';
 import Script from '@machinat/script';
-import FourDigitGame from '../scenes/FourDigitGame';
+import GameLoop from '../scenes/GameLoop';
 import { ChatEventContext } from '../types';
 
 const handlePostback = makeContainer({
@@ -16,7 +16,7 @@ const handlePostback = makeContainer({
       const action = JSON.parse(event.data!);
 
       if (action.type === 'start') {
-        const runtime = await processor.start(event.channel!, FourDigitGame);
+        const runtime = await processor.start(event.channel!, GameLoop);
         return reply(runtime.output());
       }
     }

@@ -5,6 +5,7 @@ import WebviewClient, { useEventReducer } from '@machinat/webview/client';
 import { MessengerClientAuthorizer } from '@machinat/messenger/webview';
 import { TelegramClientAuthorizer } from '@machinat/telegram/webview';
 import { LineClientAuthorizer } from '@machinat/line/webview';
+import { GameRecordsState } from '../../types';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -24,30 +25,48 @@ const client = new WebviewClient(
       }
 );
 
+const DeleteButton = ({ startAt }) => (
+  <button
+    style={{ float: 'right' }}
+    disabled={!client.isConnected}
+    onClick={() => {
+      client.send({
+        category: 'webview_action',
+        type: 'delete_record',
+        payload: { startAt },
+      });
+    }}
+  >
+    ❌
+  </button>
+);
+
 const WebAppHome = () => {
-  const data = useEventReducer(
+  const { records } = useEventReducer<GameRecordsState>(
     client,
-    (currentData: { hello?: string }, { event }): { hello?: string } => {
-      if (event.type === 'hello') {
-        return { hello: event.payload };
+    (currentData, { event }) => {
+      if (event.type === 'app_data') {
+        return event.payload;
+      }
+      if (event.type === 'record_deleted') {
+        return {
+          records: currentData.records.filter(
+            (record) => record.startAt !== event.payload.startAt
+          ),
+        };
       }
       return currentData;
     },
-    { hello: undefined }
+    { records: [] }
   );
 
-  const [isButtonTapped, setButtonTapped] = React.useState(false);
-
-  const Button = ({ payload }) => (
-    <button
-      disabled={!client.isConnected}
-      onClick={() => {
-        client.send({ category: 'greeting', type: 'hello', payload });
-        setButtonTapped(true);
-      }}
-    >
-      {payload}
-    </button>
+  const bestRecord = records.reduce(
+    (best, { guesses }) => Math.max(best, guesses.length),
+    -1
+  );
+  const bestTime = records.reduce(
+    (best, { startAt, finishAt }) => Math.min(best, finishAt - startAt),
+    Infinity
   );
 
   return (
@@ -61,23 +80,32 @@ const WebAppHome = () => {
       </Head>
 
       <main>
-        <h1>Hello In-Chat Webview!</h1>
-        <p>
-          Get started by editing <code>src/webview/pages/index.js</code>
-        </p>
-
-        <h3>{data.hello || 'connecting... '}</h3>
-        <p>
-          {isButtonTapped
-            ? 'Great! Check the chatroom 👍'
-            : client.isConnected
-            ? 'Tap a button 👇'
-            : ''}
-        </p>
-        <div>
-          <Button payload="Foo" />
-          <Button payload="Bar" />
-        </div>
+        <h3>
+          Best Record 👑: <i>{bestRecord !== -1 ? bestRecord : '-'} times</i>
+        </h3>
+        <h3>
+          Best Time ⏰:{' '}
+          <i>{bestTime !== Infinity ? Math.floor(bestTime / 1000) : '-'} sec</i>
+        </h3>
+        {records.map(({ answer, guesses, startAt, finishAt }) => (
+          <details>
+            <summary>
+              <b>{answer}</b>
+              {' - '}
+              <i>
+                <code>{Math.floor((finishAt - startAt) / 1000)}s</code>
+                {' - '}
+                <code>{guesses.length} times</code>
+              </i>
+              <DeleteButton startAt={startAt} />
+            </summary>
+            <ol>
+              {guesses.map((input) => (
+                <li>{input}</li>
+              ))}
+            </ol>
+          </details>
+        ))}
       </main>
     </div>
   );

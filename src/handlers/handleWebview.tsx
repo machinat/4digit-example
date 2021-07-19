@@ -1,28 +1,39 @@
-import Machinat from '@machinat/core';
+import StateController from '@machinat/core/base/StateController';
 import { makeContainer } from '@machinat/core/service';
-import WithWebviewLink from '../components/WithWebviewLink';
-import { WebAppEventContext } from '../types';
+import { WebAppEventContext, GameRecordsState } from '../types';
 
-const handleWebview = makeContainer({ deps: [Machinat.Bot] })(
-  (baseBot) =>
-    async ({
-      event,
-      bot: webviewBot,
-      metadata: { auth },
-    }: WebAppEventContext) => {
+const handleWebview = makeContainer({ deps: [StateController] })(
+  (stateController) =>
+    async ({ event, bot, metadata: { auth } }: WebAppEventContext) => {
       if (event.type === 'connect') {
-        // send hello when webview connection connect
-        await webviewBot.send(event.channel, {
-          category: 'greeting',
-          type: 'hello',
-          payload: `Hello, user from ${auth.platform}!`,
+        const data = await stateController
+          .channelState(auth.channel)
+          .get<GameRecordsState>('game_records');
+
+        await bot.send(event.channel, {
+          category: 'webview_push',
+          type: 'app_data',
+          payload: data || { records: [] },
         });
-      } else if (event.type === 'hello') {
-        // reflect hello to chatroom
-        await baseBot.render(
-          auth.channel,
-          <WithWebviewLink>Hello {event.payload}!</WithWebviewLink>
-        );
+      } else if (event.type === 'delete_record') {
+        const { startAt } = event.payload;
+
+        await stateController
+          .channelState(auth.channel)
+          .update<GameRecordsState>(
+            'game_records',
+            ({ records } = { records: [] }) => ({
+              records: records.filter((record) => record.startAt !== startAt),
+            })
+          );
+
+        await bot.send(event.channel, {
+          category: 'webview_push',
+          type: 'record_deleted',
+          payload: { startAt },
+        });
+
+        console.log({ startAt });
       }
     }
 );

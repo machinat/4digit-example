@@ -14,19 +14,29 @@ export const generate4Digits = () => {
   return digits;
 };
 
-export const check4DigitFormat = (input: string) => /^[0-9]{4}$/.test(input);
+export const verify4Digit = (input: string, expected: string) => {
+  if (!/^[0-9]{4}$/.test(input)) {
+    return null;
+  }
 
-export const verify4Digit = (actual: string, expected: string) => {
   let a = 0;
   let b = 0;
+  const usedSlots = new Array(4).fill(false);
 
   for (let i = 0; i < 4; i++) {
-    const n = actual[i];
+    const n = input[i];
 
     if (n === expected[i]) {
       a += 1;
-    } else if (expected.indexOf(n) !== -1) {
-      b += 1;
+      if (usedSlots[i] === true) {
+        b -= 1;
+      }
+    } else {
+      const j = expected.indexOf(n);
+      if (j !== -1 && !usedSlots[j]) {
+        b += 1;
+        usedSlots[j] = true;
+      }
     }
   }
 

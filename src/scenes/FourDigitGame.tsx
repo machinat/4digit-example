@@ -1,89 +1,102 @@
 import Machinat from '@machinat/core';
 import { makeContainer } from '@machinat/core/service';
+import StateController from '@machinat/core/base/StateController';
 import { build } from '@machinat/script';
-import { $, WHILE, PROMPT, IF, THEN, EFFECT } from '@machinat/script/keywords';
-import {
-  generate4Digits,
-  check4DigitFormat,
-  verify4Digit,
-} from '../utils/4digits';
+import { $, WHILE, PROMPT, IF, THEN, RETURN } from '@machinat/script/keywords';
+import { generate4Digits, verify4Digit } from '../utils/4digits';
+import useIntent from '../service/useIntent';
+import WithReplies from '../components/WithReplies';
+import { GameRecord, ChatEventContext } from '../types';
 
 type GameVars = {
   answer: string;
-  input?: string;
-  count: number;
-  result: { a: number; b: number };
-  finished: boolean;
+  inputs: string[];
+  startAt: number;
+  result: null | { a: number; b: number };
+  giveUp: boolean;
 };
 
-export default build<GameVars>(
+export default build<GameVars, ChatEventContext, void, GameRecord>(
   {
     name: 'FourDigitGame',
     initVars: () => ({
       answer: generate4Digits(),
-      input: undefined,
-      result: { a: 0, b: 0 },
-      count: 0,
-      finished: false,
+      inputs: [],
+      startAt: Date.now(),
+      result: null,
+      giveUp: false,
     }),
   },
   <$<GameVars>>
     {() => <p>Guess a 4 digit number:</p>}
 
-    <WHILE<GameVars> condition={({ vars }) => !vars.finished}>
+    <WHILE<GameVars>
+      condition={({ vars: { result } }) => !(result && result.a === 4)}
+    >
       <PROMPT<GameVars>
-        key="ask-todo"
-        set={({ vars }, { event }) => {
-          const isInputValid =
-            event.type === 'text' && check4DigitFormat(event.text);
-          return {
-            ...vars,
-            input: isInputValid ? event.text : undefined,
-            count: isInputValid ? vars.count + 1 : vars.count,
-          };
-        }}
+        key="ask-digits"
+        set={makeContainer({ deps: [useIntent] })(
+          (getIntent) =>
+            async ({ vars }, { event }) => {
+              const result =
+                event.type === 'text'
+                  ? verify4Digit(event.text, vars.answer)
+                  : null;
+
+              if (!result) {
+                const intent = await getIntent(event);
+                return { ...vars, result, giveUp: intent.type === 'no' };
+              }
+
+              return { ...vars, result, inputs: [...vars.inputs, event.text] };
+            }
+        )}
       />
 
-      <IF<GameVars> condition={({ vars }) => vars.input !== undefined}>
+      <IF<GameVars> condition={({ vars }) => vars.giveUp}>
         <THEN<GameVars>>
-          <EFFECT
-            set={({ vars }) => {
-              const result = verify4Digit(vars.input, vars.answer);
+          {({ vars: { answer } }) => (
+            <p>
+              Alright, the answer is <b>{answer}</b>! 😉
+            </p>
+          )}
+          <RETURN />
+        </THEN>
+      </IF>
 
-              return { ...vars, result, finished: result.a === 4 };
-            }}
-          />
-
-          {({ vars: { count, result, finished } }) => {
-            return finished ? (
+      {({ vars: { inputs, result } }) => {
+        return (
+          <WithReplies replies={[{ title: 'Give up', action: 'no' }]}>
+            {!result ? (
+              <p>
+                Please insert a 4 digits number like <i>1234</i>:
+              </p>
+            ) : result.a === 4 ? (
               <>
                 <p>Congratulation 🎉</p>
-                <p>You've finished in {count} guesses!</p>
+                <p>
+                  You've finished in <b>{inputs.length}</b> guesses!
+                </p>
               </>
             ) : (
               <p>
-                {result.a}a {result.b}b
+                <i>
+                  {result.a}a {result.b}b
+                </i>
               </p>
-            );
-          }}
-        </THEN>
-      </IF>
+            )}
+          </WithReplies>
+        );
+      }}
     </WHILE>
 
-    {/*<EFFECT<GameVars>
-      set={makeContainer({ deps: [TodoController] })(
-        (todoController) =>
-          async ({ vars, channel }) => {
-            const { data } = await todoController.addTodo(
-              channel,
-              vars.todoName
-            );
-            return {
-              ...vars,
-              todosCount: data.todos.length,
-            };
-          }
-      )}
-    />*/}
+    <RETURN<GameVars, GameRecord>
+      value={({ vars: { answer, inputs, startAt } }) => ({
+        answer,
+        guesses: inputs,
+        startAt,
+        finishAt: Date.now(),
+      })}
+    />
   </$>
 );

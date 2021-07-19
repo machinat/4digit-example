@@ -16,3 +16,14 @@ export type WebAppEventContext = WebviewEventContext<
 >;
 
 export type AppEventContext = ChatEventContext | WebAppEventContext;
+
+export type GameRecord = {
+  answer: string;
+  guesses: string[];
+  startAt: number;
+  finishAt: number;
+};
+
+export type GameRecordsState = {
+  records: GameRecord[];
+};
