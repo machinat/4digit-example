@@ -88,7 +88,7 @@ const WebAppHome = () => {
           <i>{bestTime !== Infinity ? Math.floor(bestTime / 1000) : '-'} sec</i>
         </h3>
         {records.map(({ answer, guesses, startAt, finishAt }) => (
-          <details>
+          <details key={startAt}>
             <summary>
               <b>{answer}</b>
               {' - '}
@@ -101,7 +101,7 @@ const WebAppHome = () => {
             </summary>
             <ol>
               {guesses.map((input) => (
-                <li>{input}</li>
+                <li key={input}>{input}</li>
               ))}
             </ol>
           </details>
