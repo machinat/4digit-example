@@ -55,7 +55,7 @@ const main = (event$: Stream<AppEventContext>): void => {
           ctx.event.category === 'message'
       )
     )
-    .subscribe(handleMessage);
+    .subscribe(handleMessage, console.error);
 
   chat$
     .pipe(
@@ -64,7 +64,7 @@ const main = (event$: Stream<AppEventContext>): void => {
           ctx.event.type === 'postback' || ctx.event.type === 'callback_query'
       )
     )
-    .subscribe(handlePostback);
+    .subscribe(handlePostback, console.error);
 
   event$
     .pipe(
@@ -72,7 +72,7 @@ const main = (event$: Stream<AppEventContext>): void => {
         (ctx): ctx is WebAppEventContext => ctx.event.platform === 'webview'
       )
     )
-    .subscribe(handleWebview);
+    .subscribe(handleWebview, console.error);
 };
 
 export default main;
