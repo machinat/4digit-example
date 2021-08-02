@@ -28,7 +28,7 @@ const WithReplies = ({ children, replies }: WithRepliesProps, { platform }) => {
     return (
       <Telegram.Expression
         replyMarkup={replies.map(({ title }) => (
-          <Telegram.ReplyKeyboard resizeKeyboard>
+          <Telegram.ReplyKeyboard resizeKeyboard oneTimeKeyboard>
             <Telegram.TextReply text={title} />
           </Telegram.ReplyKeyboard>
         ))}
