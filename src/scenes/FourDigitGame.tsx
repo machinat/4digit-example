@@ -16,7 +16,7 @@ type GameVars = {
   giveUp: boolean;
 };
 
-export default build<GameVars, ChatEventContext, void, GameRecord>(
+export default build<GameVars, ChatEventContext, void, null| GameRecord>(
   {
     name: 'FourDigitGame',
     initVars: () => ({

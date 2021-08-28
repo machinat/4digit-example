@@ -1,11 +1,11 @@
 import Machinat from '@machinat/core';
-import StateController from '@machinat/core/base/StateController';
 import { makeContainer } from '@machinat/core/service';
 import { build } from '@machinat/script';
 import { WHILE, PROMPT, CALL, RETURN } from '@machinat/script/keywords';
 import FourDigitGame from './FourDigitGame';
 import useIntent from '../service/useIntent';
 import WithReplies from '../components/WithReplies';
+import RootMenu from '../components/RootMenu';
 import { GameRecord, ChatEventContext } from '../types';
 
 type GameLoopVars = {
@@ -35,7 +35,7 @@ export default build<
         script={FourDigitGame}
         set={({ vars }, record) => ({
           ...vars,
-          records: [...vars.records, record],
+          records: record ? [...vars.records, record] : vars.records,
         })}
       />
 
@@ -65,7 +65,7 @@ export default build<
       />
     </WHILE>
 
-    {() => <p>Come back anytime! 😄</p>}
+    {() => <RootMenu>Come back anytime! 😄</RootMenu>}
     <RETURN value={({ vars: { records } }) => ({ records })} />
   </>
 );
