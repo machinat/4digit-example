@@ -12,7 +12,7 @@ type RootMenuProps = {
 const RootMenu = makeContainer({ deps: [ServerDomain, LineLiffId] })(
   (serverDomain, lineLiffId) =>
     ({ children }: RootMenuProps, { platform }) => {
-      const startLabel = 'Go 🔢';
+      const startLabel = 'Start 🔢';
       const startData = JSON.stringify({ type: 'start' });
 
       const recordsLabel = 'Records 📑';
