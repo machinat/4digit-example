@@ -4,7 +4,7 @@ import Script from '@machinat/script';
 import RootMenu from '../components/RootMenu';
 import GameLoop from '../scenes/GameLoop';
 import useIntent from '../service/useIntent';
-import { ChatEventContext } from '../types';
+import { ChatEventContext } from '../../types';
 
 const handleMessage = makeContainer({
   deps: [Script.Processor, useIntent] as const,

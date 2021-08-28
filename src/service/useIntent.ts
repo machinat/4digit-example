@@ -1,5 +1,5 @@
 import { makeFactoryProvider } from '@machinat/core/service';
-import { ChatEventContext } from '../types';
+import { ChatEventContext } from '../../types';
 
 type IntentResult = {
   type: 'yes' | 'no' | 'unknown';
@@ -7,9 +7,7 @@ type IntentResult = {
 
 const useIntent =
   // TODO: use IntentRecognizer
-
-
-    () =>
+  () =>
     async (event: ChatEventContext['event']): Promise<IntentResult> => {
       if (
         event.type === 'postback' ||

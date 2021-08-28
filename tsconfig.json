@@ -22,8 +22,6 @@
     "strictNullChecks": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "composite": true,
-    "declaration": true,
     "sourceMap": true
   }
 }
