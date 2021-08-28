@@ -2,7 +2,6 @@ node_modules
 .*
 Dockerfile
 src
-types.d.ts
 webview
 !webview/next.config.js
 !webview/public

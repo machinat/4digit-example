@@ -12,7 +12,7 @@ import {
   ChatEventContext,
   WebAppEventContext,
   GameRecordsState,
-} from '../types';
+} from './types';
 
 const main = (event$: Stream<AppEventContext>): void => {
   const chat$ = event$.pipe(

@@ -6,7 +6,7 @@ import FourDigitGame from './FourDigitGame';
 import useIntent from '../service/useIntent';
 import WithReplies from '../components/WithReplies';
 import RootMenu from '../components/RootMenu';
-import { GameRecord, ChatEventContext } from '../../types';
+import { GameRecord, ChatEventContext } from '../types';
 
 type GameLoopVars = {
   records: GameRecord[];

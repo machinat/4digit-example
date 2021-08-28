@@ -5,7 +5,7 @@ import { $, WHILE, PROMPT, IF, THEN, RETURN } from '@machinat/script/keywords';
 import { generate4Digits, verify4Digit } from '../utils/4digits';
 import useIntent from '../service/useIntent';
 import WithReplies from '../components/WithReplies';
-import { GameRecord, ChatEventContext } from '../../types';
+import { GameRecord, ChatEventContext } from '../types';
 
 type GameVars = {
   answer: string;

@@ -1,7 +1,7 @@
 import { makeContainer } from '@machinat/core/service';
 import Script from '@machinat/script';
 import GameLoop from '../scenes/GameLoop';
-import { ChatEventContext } from '../../types';
+import { ChatEventContext } from '../types';
 
 const handlePostback = makeContainer({
   deps: [Script.Processor] as const,
