@@ -42,7 +42,7 @@ export default build<
       {() => (
         <WithReplies
           replies={[
-            { title: 'Ok 👌', action: 'yes' },
+            { title: 'OK 👌', action: 'yes' },
             { title: 'No ✋', action: 'no' },
           ]}
         >
