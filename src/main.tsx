@@ -18,7 +18,7 @@ const main = (event$: Stream<AppEventContext>): void => {
   const chat$ = event$.pipe(
     filter((ctx): ctx is ChatEventContext => ctx.platform !== 'webview'),
     filter(
-      makeContainer({ deps: [Script.Processor, StateController] as const })(
+      makeContainer({ deps: [Script.Processor, StateController] })(
         (processor: Script.Processor<typeof GameLoop>, stateController) =>
           async (ctx) => {
             const { channel } = ctx.event;

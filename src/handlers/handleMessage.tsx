@@ -7,7 +7,7 @@ import useIntent from '../service/useIntent';
 import { ChatEventContext } from '../types';
 
 const handleMessage = makeContainer({
-  deps: [Script.Processor, useIntent] as const,
+  deps: [Script.Processor, useIntent],
 })(
   (processor, getIntent) =>
     async ({

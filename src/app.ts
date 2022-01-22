@@ -2,19 +2,21 @@ import Machinat from '@machinat/core';
 import Http from '@machinat/http';
 import Script from '@machinat/script';
 import Messenger from '@machinat/messenger';
-import MessengerAuthorizer from '@machinat/messenger/webview';
+import MessengerAuthenticator from '@machinat/messenger/webview';
 import Line from '@machinat/line';
-import LineAuthorizer from '@machinat/line/webview';
+import LineAuthenticator from '@machinat/line/webview';
 import Telegram from '@machinat/telegram';
-import TelegramAuthorizer from '@machinat/telegram/webview';
+import TelegramAuthenticator from '@machinat/telegram/webview';
 import Webview from '@machinat/webview';
+import DialogFlow from '@machinat/dialogflow';
 import RedisState from '@machinat/redis-state';
-import { FileState } from '@machinat/local-state';
+import { FileState } from '@machinat/dev-tools';
+import nextConfigs from '../webview/next.config.js';
+import recognitionData from './recognitionData';
+import useIntent from './service/useIntent';
 import { ServerDomain, LineLiffId } from './interface';
 import FourDigitGame from './scenes/FourDigitGame';
 import GameLoop from './scenes/GameLoop';
-import useIntent from './service/useIntent';
-import nextConfigs from '../webview/next.config.js';
 
 const {
   // location
@@ -40,33 +42,16 @@ const {
   LINE_LIFF_ID,
   // redis
   REDIS_URL,
+  // dialogflow
+  DIALOG_FLOW_PROJECT_ID,
+  DIALOG_FLOW_CLIENT_EMAIL,
+  DIALOG_FLOW_PRIVATE_KEY,
+  GOOGLE_APPLICATION_CREDENTIALS,
 } = process.env as Record<string, string>;
 
-const DEV = NODE_ENV === 'development';
+const DEV = NODE_ENV !== 'production';
 
 const app = Machinat.createApp({
-  modules: [
-    Http.initModule({
-      listenOptions: {
-        port: PORT ? Number(PORT) : 8080,
-      },
-    }),
-
-    DEV
-      ? FileState.initModule({
-          path: './.state_data.json',
-        })
-      : RedisState.initModule({
-          clientOptions: {
-            url: REDIS_URL,
-          },
-        }),
-
-    Script.initModule({
-      libs: [FourDigitGame, GameLoop],
-    }),
-  ],
-
   platforms: [
     Messenger.initModule({
       webhookPath: '/webhook/messenger',
@@ -92,7 +77,7 @@ const app = Machinat.createApp({
     }),
 
     Webview.initModule<
-      MessengerAuthorizer | TelegramAuthorizer | LineAuthorizer
+      MessengerAuthenticator | TelegramAuthenticator | LineAuthenticator
     >({
       webviewHost: DOMAIN,
       webviewPath: '/webview',
@@ -102,24 +87,55 @@ const app = Machinat.createApp({
       nextServerOptions: {
         dev: DEV,
         dir: './webview',
-        conf: {
-          ...nextConfigs,
-          publicRuntimeConfig: {
-            messengerAppId: MESSENGER_APP_ID,
-            lineProviderId: LINE_PROVIDER_ID,
-            lineBotChannelId: LINE_CHANNEL_ID,
-            lineLiffId: LINE_LIFF_ID,
-          },
-        },
+        conf: nextConfigs,
       },
+    }),
+  ],
+
+  modules: [
+    Http.initModule({
+      listenOptions: {
+        port: PORT ? Number(PORT) : 8080,
+      },
+    }),
+
+    DEV
+      ? FileState.initModule({
+          path: './.state_storage.json',
+        })
+      : RedisState.initModule({
+          clientOptions: {
+            url: REDIS_URL,
+          },
+        }),
+
+    Script.initModule({
+      libs: [FourDigitGame, GameLoop],
+    }),
+
+    DialogFlow.initModule({
+      recognitionData,
+      projectId: DIALOG_FLOW_PROJECT_ID,
+      environment: `digits-example-${DEV ? 'dev' : 'prod'}`,
+      clientOptions: GOOGLE_APPLICATION_CREDENTIALS
+        ? undefined
+        : {
+            credentials: {
+              client_email: DIALOG_FLOW_CLIENT_EMAIL,
+              private_key: DIALOG_FLOW_PRIVATE_KEY,
+            },
+          },
     }),
   ],
 
   services: [
     useIntent,
-    { provide: Webview.AuthorizerList, withProvider: MessengerAuthorizer },
-    { provide: Webview.AuthorizerList, withProvider: TelegramAuthorizer },
-    { provide: Webview.AuthorizerList, withProvider: LineAuthorizer },
+    {
+      provide: Webview.AuthenticatorList,
+      withProvider: MessengerAuthenticator,
+    },
+    { provide: Webview.AuthenticatorList, withProvider: TelegramAuthenticator },
+    { provide: Webview.AuthenticatorList, withProvider: LineAuthenticator },
 
     { provide: ServerDomain, withValue: DOMAIN },
     { provide: LineLiffId, withValue: LINE_LIFF_ID },

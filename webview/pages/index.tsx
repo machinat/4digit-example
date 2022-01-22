@@ -2,28 +2,25 @@ import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import WebviewClient, { useEventReducer } from '@machinat/webview/client';
-import { MessengerClientAuthorizer } from '@machinat/messenger/webview';
-import { TelegramClientAuthorizer } from '@machinat/telegram/webview';
-import { LineClientAuthorizer } from '@machinat/line/webview';
+import MessengerClientAuthenticator from '@machinat/messenger/webview/client';
+import TelegramClientAuthenticator from '@machinat/telegram/webview/client';
+import LineClientAuthenticator from '@machinat/line/webview/client';
 import { GameRecordsState } from '../../src/types';
 
 const { publicRuntimeConfig } = getConfig();
 
-const client = new WebviewClient(
-  typeof window === 'undefined'
-    ? { mockupMode: true, authorizers: [] }
-    : {
-        authorizers: [
-          new MessengerClientAuthorizer({
-            appId: publicRuntimeConfig.messengerAppId,
-          }),
-          new TelegramClientAuthorizer(),
-          new LineClientAuthorizer({
-            liffId: publicRuntimeConfig.lineLiffId,
-          }),
-        ],
-      }
-);
+const client = new WebviewClient({
+  mockupMode: typeof window === 'undefined',
+  authenticators: [
+    new MessengerClientAuthenticator({
+      appId: publicRuntimeConfig.messengerAppId,
+    }),
+    new TelegramClientAuthenticator(),
+    new LineClientAuthenticator({
+      liffId: publicRuntimeConfig.lineLiffId,
+    }),
+  ],
+});
 
 const DeleteButton = ({ startAt }) => (
   <button

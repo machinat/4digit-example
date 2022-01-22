@@ -4,7 +4,7 @@ import GameLoop from '../scenes/GameLoop';
 import { ChatEventContext } from '../types';
 
 const handlePostback = makeContainer({
-  deps: [Script.Processor] as const,
+  deps: [Script.Processor],
 })(
   (processor) =>
     async ({

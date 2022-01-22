@@ -1,7 +1,7 @@
 import Machinat from '@machinat/core';
 import { makeContainer } from '@machinat/core/service';
 import { build } from '@machinat/script';
-import { WHILE, PROMPT, CALL, RETURN } from '@machinat/script/keywords';
+import * as $ from '@machinat/script/keywords';
 import FourDigitGame from './FourDigitGame';
 import useIntent from '../service/useIntent';
 import WithReplies from '../components/WithReplies';
@@ -24,13 +24,13 @@ export default build<
     initVars: () => ({ records: [], continue: true }),
   },
   <>
-    <WHILE<GameLoopVars> condition={({ vars }) => vars.continue}>
+    <$.WHILE<GameLoopVars> condition={({ vars }) => vars.continue}>
       {() => (
         <p>
-          Game Start <code>🔢</code>
+          Game Start 🔢
         </p>
       )}
-      <CALL<GameLoopVars, typeof FourDigitGame>
+      <$.CALL<GameLoopVars, typeof FourDigitGame>
         key="play"
         script={FourDigitGame}
         set={({ vars }, record) => ({
@@ -50,7 +50,7 @@ export default build<
         </WithReplies>
       )}
 
-      <PROMPT<GameLoopVars>
+      <$.PROMPT<GameLoopVars>
         key="ask-continue"
         set={makeContainer({ deps: [useIntent] })(
           (getIntent) =>
@@ -63,9 +63,9 @@ export default build<
             }
         )}
       />
-    </WHILE>
+    </$.WHILE>
 
     {() => <RootMenu>Come back anytime! 😄</RootMenu>}
-    <RETURN value={({ vars: { records } }) => ({ records })} />
+    <$.RETURN value={({ vars: { records } }) => ({ records })} />
   </>
 );

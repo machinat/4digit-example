@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 import { parse as parseUrl } from 'url';
-import { config as configEnv } from 'dotenv';
 import localtunnel from 'localtunnel';
 import nodemon from 'nodemon';
 
-configEnv();
 const { PORT, DEV_TUNNEL_SUBDOMAIN } = process.env;
 
 async function connectTunnel() {
@@ -55,7 +53,7 @@ async function dev() {
 
   // run server in watch mode
   nodemon({
-    exec: './node_modules/.bin/ts-node -r dotenv/config',
+    exec: './node_modules/.bin/ts-node',
     script: './src/index.ts',
     watch: './src',
     ext: 'ts,tsx',
