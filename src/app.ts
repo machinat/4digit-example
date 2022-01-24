@@ -51,94 +51,102 @@ const {
 
 const DEV = NODE_ENV !== 'production';
 
-const app = Machinat.createApp({
-  platforms: [
-    Messenger.initModule({
-      webhookPath: '/webhook/messenger',
-      pageId: Number(MESSENGER_PAGE_ID),
-      appSecret: MESSENGER_APP_SECRET,
-      accessToken: MESSENGER_ACCESS_TOKEN,
-      verifyToken: MESSENGER_VERIFY_TOKEN,
-    }),
+type CreateAppOptions = {
+  noServer?: boolean;
+};
 
-    Telegram.initModule({
-      webhookPath: '/webhook/telegram',
-      botToken: TELEGRAM_BOT_TOKEN,
-      secretPath: TELEGRAM_SECRET_PATH,
-    }),
+const createApp = (options?: CreateAppOptions) => {
+  return Machinat.createApp({
+    modules: [
+      Http.initModule({
+        noServer: options?.noServer,
+        listenOptions: {
+          port: PORT ? Number(PORT) : 8080,
+        },
+      }),
 
-    Line.initModule({
-      webhookPath: '/webhook/line',
-      providerId: LINE_PROVIDER_ID,
-      channelId: LINE_CHANNEL_ID,
-      accessToken: LINE_ACCESS_TOKEN,
-      channelSecret: LINE_CHANNEL_SECRET,
-      liffChannelIds: [LINE_LIFF_ID.split('-')[0]],
-    }),
-
-    Webview.initModule<
-      MessengerWebviewAuth | TelegramWebviewAuth | LineWebviewAuth
-    >({
-      webviewHost: DOMAIN,
-      webviewPath: '/webview',
-
-      authSecret: WEBVIEW_AUTH_SECRET,
-      sameSite: 'none',
-      authPlatforms: [
-        MessengerWebviewAuth,
-        TelegramWebviewAuth,
-        LineWebviewAuth,
-      ],
-
-      nextServerOptions: {
-        dev: DEV,
-        dir: './webview',
-        conf: nextConfigs,
-      },
-    }),
-  ],
-
-  modules: [
-    Http.initModule({
-      listenOptions: {
-        port: PORT ? Number(PORT) : 8080,
-      },
-    }),
-
-    DEV
-      ? FileState.initModule({
-          path: './.state_storage.json',
-        })
-      : RedisState.initModule({
-          clientOptions: {
-            url: REDIS_URL,
-          },
-        }),
-
-    Script.initModule({
-      libs: [FourDigitGame, GameLoop],
-    }),
-
-    DialogFlow.initModule({
-      recognitionData,
-      projectId: DIALOG_FLOW_PROJECT_ID,
-      environment: `digits-example-${DEV ? 'dev' : 'prod'}`,
-      clientOptions: GOOGLE_APPLICATION_CREDENTIALS
-        ? undefined
-        : {
-            credentials: {
-              client_email: DIALOG_FLOW_CLIENT_EMAIL,
-              private_key: DIALOG_FLOW_PRIVATE_KEY,
+      DEV
+        ? FileState.initModule({
+            path: './.state_storage.json',
+          })
+        : RedisState.initModule({
+            clientOptions: {
+              url: REDIS_URL,
             },
-          },
-    }),
-  ],
+          }),
 
-  services: [
-    useIntent,
-    { provide: ServerDomain, withValue: DOMAIN },
-    { provide: LineLiffId, withValue: LINE_LIFF_ID },
-  ],
-});
+      Script.initModule({
+        libs: [FourDigitGame, GameLoop],
+      }),
 
-export default app;
+      DialogFlow.initModule({
+        recognitionData,
+        projectId: DIALOG_FLOW_PROJECT_ID,
+        environment: `digits-example-${DEV ? 'dev' : 'prod'}`,
+        clientOptions: GOOGLE_APPLICATION_CREDENTIALS
+          ? undefined
+          : {
+              credentials: {
+                client_email: DIALOG_FLOW_CLIENT_EMAIL,
+                private_key: DIALOG_FLOW_PRIVATE_KEY,
+              },
+            },
+      }),
+    ],
+
+    platforms: [
+      Messenger.initModule({
+        webhookPath: '/webhook/messenger',
+        pageId: Number(MESSENGER_PAGE_ID),
+        appSecret: MESSENGER_APP_SECRET,
+        accessToken: MESSENGER_ACCESS_TOKEN,
+        verifyToken: MESSENGER_VERIFY_TOKEN,
+      }),
+
+      Telegram.initModule({
+        webhookPath: '/webhook/telegram',
+        botToken: TELEGRAM_BOT_TOKEN,
+        secretPath: TELEGRAM_SECRET_PATH,
+      }),
+
+      Line.initModule({
+        webhookPath: '/webhook/line',
+        providerId: LINE_PROVIDER_ID,
+        channelId: LINE_CHANNEL_ID,
+        accessToken: LINE_ACCESS_TOKEN,
+        channelSecret: LINE_CHANNEL_SECRET,
+        liffChannelIds: [LINE_LIFF_ID.split('-')[0]],
+      }),
+
+      Webview.initModule<
+        MessengerWebviewAuth | TelegramWebviewAuth | LineWebviewAuth
+      >({
+        webviewHost: DOMAIN,
+        webviewPath: '/webview',
+
+        authSecret: WEBVIEW_AUTH_SECRET,
+        sameSite: 'none',
+        authPlatforms: [
+          MessengerWebviewAuth,
+          TelegramWebviewAuth,
+          LineWebviewAuth,
+        ],
+
+        noNextServer: options?.noServer,
+        nextServerOptions: {
+          dev: DEV,
+          dir: './webview',
+          conf: nextConfigs,
+        },
+      }),
+    ],
+
+    services: [
+      useIntent,
+      { provide: ServerDomain, withValue: DOMAIN },
+      { provide: LineLiffId, withValue: LINE_LIFF_ID },
+    ],
+  });
+};
+
+export default createApp;
