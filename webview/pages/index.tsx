@@ -2,21 +2,21 @@ import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import WebviewClient, { useEventReducer } from '@machinat/webview/client';
-import MessengerClientAuthenticator from '@machinat/messenger/webview/client';
-import TelegramClientAuthenticator from '@machinat/telegram/webview/client';
-import LineClientAuthenticator from '@machinat/line/webview/client';
+import MessengerWebviewAuth from '@machinat/messenger/webview/client';
+import TelegramWebviewAuth from '@machinat/telegram/webview/client';
+import LineWebviewAuth from '@machinat/line/webview/client';
 import { GameRecordsState } from '../../src/types';
 
 const { publicRuntimeConfig } = getConfig();
 
 const client = new WebviewClient({
   mockupMode: typeof window === 'undefined',
-  authenticators: [
-    new MessengerClientAuthenticator({
+  authPlatforms: [
+    new MessengerWebviewAuth({
       appId: publicRuntimeConfig.messengerAppId,
     }),
-    new TelegramClientAuthenticator(),
-    new LineClientAuthenticator({
+    new TelegramWebviewAuth(),
+    new LineWebviewAuth({
       liffId: publicRuntimeConfig.lineLiffId,
     }),
   ],

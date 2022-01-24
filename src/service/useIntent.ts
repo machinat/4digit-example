@@ -24,7 +24,7 @@ const useIntent = makeFactoryProvider({ deps: [IntentRecognizer] })(
           event.channel,
           event.text
         );
-        console.log(intent)
+        console.log(intent);
         return { type: (intent.type as 'yes' | 'no') || 'unknown' };
       }
 

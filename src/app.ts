@@ -2,11 +2,11 @@ import Machinat from '@machinat/core';
 import Http from '@machinat/http';
 import Script from '@machinat/script';
 import Messenger from '@machinat/messenger';
-import MessengerAuthenticator from '@machinat/messenger/webview';
+import MessengerWebviewAuth from '@machinat/messenger/webview';
 import Line from '@machinat/line';
-import LineAuthenticator from '@machinat/line/webview';
+import LineWebviewAuth from '@machinat/line/webview';
 import Telegram from '@machinat/telegram';
-import TelegramAuthenticator from '@machinat/telegram/webview';
+import TelegramWebviewAuth from '@machinat/telegram/webview';
 import Webview from '@machinat/webview';
 import DialogFlow from '@machinat/dialogflow';
 import RedisState from '@machinat/redis-state';
@@ -77,13 +77,19 @@ const app = Machinat.createApp({
     }),
 
     Webview.initModule<
-      MessengerAuthenticator | TelegramAuthenticator | LineAuthenticator
+      MessengerWebviewAuth | TelegramWebviewAuth | LineWebviewAuth
     >({
       webviewHost: DOMAIN,
       webviewPath: '/webview',
-      authSecret: WEBVIEW_AUTH_SECRET,
 
+      authSecret: WEBVIEW_AUTH_SECRET,
       sameSite: 'none',
+      authPlatforms: [
+        MessengerWebviewAuth,
+        TelegramWebviewAuth,
+        LineWebviewAuth,
+      ],
+
       nextServerOptions: {
         dev: DEV,
         dir: './webview',
@@ -130,13 +136,6 @@ const app = Machinat.createApp({
 
   services: [
     useIntent,
-    {
-      provide: Webview.AuthenticatorList,
-      withProvider: MessengerAuthenticator,
-    },
-    { provide: Webview.AuthenticatorList, withProvider: TelegramAuthenticator },
-    { provide: Webview.AuthenticatorList, withProvider: LineAuthenticator },
-
     { provide: ServerDomain, withValue: DOMAIN },
     { provide: LineLiffId, withValue: LINE_LIFF_ID },
   ],

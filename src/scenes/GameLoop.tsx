@@ -25,11 +25,7 @@ export default build<
   },
   <>
     <$.WHILE<GameLoopVars> condition={({ vars }) => vars.continue}>
-      {() => (
-        <p>
-          Game Start 🔢
-        </p>
-      )}
+      {() => <p>Game Start 🔢</p>}
       <$.CALL<GameLoopVars, typeof FourDigitGame>
         key="play"
         script={FourDigitGame}
