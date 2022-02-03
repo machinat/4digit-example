@@ -1,5 +1,4 @@
-import { makeFactoryProvider } from '@machinat/core/service';
-import IntentRecognizer from '@machinat/core/base/IntentRecognizer';
+import { makeFactoryProvider, IntentRecognizer } from '@machinat/core';
 import { ChatEventContext } from '../types';
 
 type IntentResult = {

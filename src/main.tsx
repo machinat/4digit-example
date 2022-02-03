@@ -1,5 +1,4 @@
-import { makeContainer } from '@machinat/core/service';
-import StateController from '@machinat/core/base/StateController';
+import { makeContainer, StateController } from '@machinat/core';
 import Script from '@machinat/script';
 import { Stream } from '@machinat/stream';
 import { filter } from '@machinat/stream/operators';

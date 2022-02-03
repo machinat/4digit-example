@@ -1,15 +1,13 @@
-import Machinat from '@machinat/core';
-import { makeContainer } from '@machinat/core/service';
-import Script from '@machinat/script';
+import Machinat, { makeContainer } from '@machinat/core';
 import RootMenu from '../components/RootMenu';
 import GameLoop from '../scenes/GameLoop';
 import useIntent from '../service/useIntent';
 import { ChatEventContext } from '../types';
 
 const handleMessage = makeContainer({
-  deps: [Script.Processor, useIntent],
+  deps: [useIntent],
 })(
-  (processor, getIntent) =>
+  (getIntent) =>
     async ({
       event,
       reply,
@@ -18,8 +16,7 @@ const handleMessage = makeContainer({
         const intent = await getIntent(event);
 
         if (intent.type === 'yes') {
-          const runtime = await processor.start(event.channel, GameLoop);
-          return reply(runtime.output());
+          return reply(<GameLoop.Start channel={event.channel} />);
         }
       }
 

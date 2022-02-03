@@ -1,5 +1,4 @@
-import StateController from '@machinat/core/base/StateController';
-import { makeContainer } from '@machinat/core/service';
+import { makeContainer, StateController } from '@machinat/core';
 import { WebAppEventContext, GameRecordsState } from '../types';
 
 const handleWebview = makeContainer({ deps: [StateController] })(
