@@ -7,9 +7,14 @@ Playing guessing 4 digits game in chatting.
 
 Try the bot on these chat platforms:
 
-- [Messenger](https://www.messenger.com/t/100528862370150)
 - [Telegram](https://t.me/Machinat4digitsBot)
 - [LINE](https://line.me/ti/p/@405zalyx)
+- [Messenger](https://www.messenger.com/t/100528862370150)
+
+> ⚠ There is [a Facebook bug](https://developers.facebook.com/support/bugs/294949372549147)
+> that breaks webviews on the **Messenger website** client.
+> Please use the **Messenger mobile app** intead.
+
 
 ## Getting Started
 
