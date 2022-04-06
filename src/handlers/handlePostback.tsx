@@ -14,7 +14,7 @@ const handlePostback = async ({
   }
 
   if (action.type === 'start') {
-    return reply(<GameLoop.Start channel={event.channel} />);
+    return reply(<GameLoop.Start />);
   }
 };
 

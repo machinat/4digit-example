@@ -14,12 +14,12 @@ import { FileState } from '@machinat/dev-tools';
 import nextConfigs from '../webview/next.config.js';
 import recognitionData from './recognitionData';
 import useIntent from './service/useIntent';
-import { ServerDomain, LineLiffId } from './interface';
 import FourDigitGame from './scenes/FourDigitGame';
 import GameLoop from './scenes/GameLoop';
 
 const {
-  // location
+  // basic
+  APP_NAME,
   NODE_ENV,
   PORT,
   DOMAIN,
@@ -27,11 +27,11 @@ const {
   WEBVIEW_AUTH_SECRET,
   // messenger
   MESSENGER_PAGE_ID,
-  MESSENGER_APP_ID,
   MESSENGER_ACCESS_TOKEN,
   MESSENGER_APP_SECRET,
   MESSENGER_VERIFY_TOKEN,
   // telegram
+  TELEGRAM_BOT_NAME,
   TELEGRAM_BOT_TOKEN,
   TELEGRAM_SECRET_PATH,
   // line
@@ -97,7 +97,7 @@ const createApp = (options?: CreateAppOptions) => {
     platforms: [
       Messenger.initModule({
         webhookPath: '/webhook/messenger',
-        pageId: Number(MESSENGER_PAGE_ID),
+        pageId: MESSENGER_PAGE_ID,
         appSecret: MESSENGER_APP_SECRET,
         accessToken: MESSENGER_ACCESS_TOKEN,
         verifyToken: MESSENGER_VERIFY_TOKEN,
@@ -105,6 +105,7 @@ const createApp = (options?: CreateAppOptions) => {
 
       Telegram.initModule({
         webhookPath: '/webhook/telegram',
+        botName: TELEGRAM_BOT_NAME,
         botToken: TELEGRAM_BOT_TOKEN,
         secretPath: TELEGRAM_SECRET_PATH,
       }),
@@ -115,7 +116,7 @@ const createApp = (options?: CreateAppOptions) => {
         channelId: LINE_CHANNEL_ID,
         accessToken: LINE_ACCESS_TOKEN,
         channelSecret: LINE_CHANNEL_SECRET,
-        liffChannelIds: [LINE_LIFF_ID.split('-')[0]],
+        liffId: LINE_LIFF_ID,
       }),
 
       Webview.initModule<
@@ -125,12 +126,16 @@ const createApp = (options?: CreateAppOptions) => {
         webviewPath: '/webview',
 
         authSecret: WEBVIEW_AUTH_SECRET,
-        sameSite: 'none',
+        cookieSameSite: 'none',
         authPlatforms: [
           MessengerWebviewAuth,
           TelegramWebviewAuth,
           LineWebviewAuth,
         ],
+        basicAuth: {
+          appName: APP_NAME,
+          appImageUrl: 'https://machinat.com/img/logo.jpg',
+        },
 
         noNextServer: options?.noServer,
         nextServerOptions: {
@@ -141,11 +146,7 @@ const createApp = (options?: CreateAppOptions) => {
       }),
     ],
 
-    services: [
-      useIntent,
-      { provide: ServerDomain, withValue: DOMAIN },
-      { provide: LineLiffId, withValue: LINE_LIFF_ID },
-    ],
+    services: [useIntent],
   });
 };
 

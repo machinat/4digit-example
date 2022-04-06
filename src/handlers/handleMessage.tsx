@@ -16,7 +16,7 @@ const handleMessage = makeContainer({
         const intent = await getIntent(event);
 
         if (intent.type === 'yes') {
-          return reply(<GameLoop.Start channel={event.channel} />);
+          return reply(<GameLoop.Start />);
         }
       }
 
