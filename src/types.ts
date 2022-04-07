@@ -1,9 +1,9 @@
 import type { MessengerEventContext } from '@machinat/messenger';
-import type MessengerWebviewAuth from '@machinat/messenger/webview';
+import type MessengerAuth from '@machinat/messenger/webview';
 import type { TelegramEventContext } from '@machinat/telegram';
-import type TelegramWebviewAuth from '@machinat/telegram/webview';
+import type TelegramAuth from '@machinat/telegram/webview';
 import type { LineEventContext } from '@machinat/line';
-import type LineWebviewAuth from '@machinat/line/webview';
+import type LineAuth from '@machinat/line/webview';
 import type { WebviewEventContext } from '@machinat/webview';
 
 export type ChatEventContext =
@@ -12,7 +12,7 @@ export type ChatEventContext =
   | LineEventContext;
 
 export type WebAppEventContext = WebviewEventContext<
-  MessengerWebviewAuth | TelegramWebviewAuth | LineWebviewAuth
+  MessengerAuth | TelegramAuth | LineAuth
 >;
 
 export type AppEventContext = ChatEventContext | WebAppEventContext;

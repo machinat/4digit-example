@@ -2,11 +2,11 @@ import Machinat from '@machinat/core';
 import Http from '@machinat/http';
 import Script from '@machinat/script';
 import Messenger from '@machinat/messenger';
-import MessengerWebviewAuth from '@machinat/messenger/webview';
+import MessengerAuth from '@machinat/messenger/webview';
 import Line from '@machinat/line';
-import LineWebviewAuth from '@machinat/line/webview';
+import LineAuth from '@machinat/line/webview';
 import Telegram from '@machinat/telegram';
-import TelegramWebviewAuth from '@machinat/telegram/webview';
+import TelegramAuth from '@machinat/telegram/webview';
 import Webview from '@machinat/webview';
 import DialogFlow from '@machinat/dialogflow';
 import RedisState from '@machinat/redis-state';
@@ -119,22 +119,16 @@ const createApp = (options?: CreateAppOptions) => {
         liffId: LINE_LIFF_ID,
       }),
 
-      Webview.initModule<
-        MessengerWebviewAuth | TelegramWebviewAuth | LineWebviewAuth
-      >({
+      Webview.initModule<MessengerAuth | TelegramAuth | LineAuth>({
         webviewHost: DOMAIN,
         webviewPath: '/webview',
 
         authSecret: WEBVIEW_AUTH_SECRET,
         cookieSameSite: 'none',
-        authPlatforms: [
-          MessengerWebviewAuth,
-          TelegramWebviewAuth,
-          LineWebviewAuth,
-        ],
+        authPlatforms: [MessengerAuth, TelegramAuth, LineAuth],
         basicAuth: {
           appName: APP_NAME,
-          appImageUrl: 'https://machinat.com/img/logo.jpg',
+          appIconUrl: 'https://machinat.com/img/logo.jpg',
         },
 
         noNextServer: options?.noServer,

@@ -1,46 +1,25 @@
 import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
-import WebviewClient, { useEventReducer } from '@machinat/webview/client';
+import { useClient, useEventReducer } from '@machinat/webview/client';
 import MessengerAuth from '@machinat/messenger/webview/client';
 import TelegramAuth from '@machinat/telegram/webview/client';
 import LineAuth from '@machinat/line/webview/client';
 import { GameRecordsState } from '../../src/types';
 
-const { publicRuntimeConfig } = getConfig();
-
-const client = new WebviewClient({
-  mockupMode: typeof window === 'undefined',
-  authPlatforms: [
-    new MessengerAuth({
-      pageId: publicRuntimeConfig.messengerPageId,
-    }),
-    new TelegramAuth({
-      botName: publicRuntimeConfig.telegramBotName,
-    }),
-    new LineAuth({
-      liffId: publicRuntimeConfig.lineLiffId,
-    }),
-  ],
-});
-
-const DeleteButton = ({ startAt }) => (
-  <button
-    style={{ float: 'right' }}
-    disabled={!client.isConnected}
-    onClick={() => {
-      client.send({
-        category: 'webview_action',
-        type: 'delete_record',
-        payload: { startAt },
-      });
-    }}
-  >
-    ❌
-  </button>
-);
+const {
+  publicRuntimeConfig: { messengerPageId, telegramBotName, lineLiffId },
+} = getConfig();
 
 const WebAppHome = () => {
+  const client = useClient({
+    mockupMode: typeof window === 'undefined',
+    authPlatforms: [
+      new MessengerAuth({ pageId: messengerPageId }),
+      new TelegramAuth({ botName: telegramBotName }),
+      new LineAuth({ liffId: lineLiffId }),
+    ],
+  });
   const { records } = useEventReducer<GameRecordsState>(
     client,
     (currentData, { event }) => {
@@ -66,6 +45,22 @@ const WebAppHome = () => {
   const bestTime = records.reduce(
     (best, { startAt, finishAt }) => Math.min(best, finishAt - startAt),
     Infinity
+  );
+
+  const DeleteButton = ({ startAt }) => (
+    <button
+      style={{ float: 'right' }}
+      disabled={!client.isConnected}
+      onClick={() => {
+        client.send({
+          category: 'webview_action',
+          type: 'delete_record',
+          payload: { startAt },
+        });
+      }}
+    >
+      ❌
+    </button>
   );
 
   return (
