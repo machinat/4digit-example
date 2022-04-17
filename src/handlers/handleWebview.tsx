@@ -31,8 +31,6 @@ const handleWebview = makeContainer({ deps: [StateController] })(
           type: 'record_deleted',
           payload: { startAt },
         });
-
-        console.log({ startAt });
       }
     }
 );
