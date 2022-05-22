@@ -19,8 +19,11 @@ const main = (event$: Stream<AppEventContext>): void => {
     filter(
       makeContainer({ deps: [Script.Processor, StateController] })(
         (processor: Script.Processor<typeof GameLoop>, stateController) =>
-          async (ctx) => {
+          async (ctx: ChatEventContext) => {
             const { channel } = ctx.event;
+            if (!channel) {
+              return true;
+            }
 
             const runtime = await processor.continue(channel, ctx);
             if (!runtime) {
