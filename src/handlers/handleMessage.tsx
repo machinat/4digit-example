@@ -1,4 +1,4 @@
-import Machinat, { makeContainer } from '@machinat/core';
+import Sociably, { makeContainer } from '@sociably/core';
 import RootMenu from '../components/RootMenu';
 import GameLoop from '../scenes/GameLoop';
 import useIntent from '../service/useIntent';

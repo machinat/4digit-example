@@ -1,4 +1,4 @@
-export const generate4Digits = () => {
+export const create4DigitNumber = () => {
   const usedNum = new Set();
   let digits = '';
 
@@ -14,7 +14,7 @@ export const generate4Digits = () => {
   return digits;
 };
 
-export const verify4Digit = (input: string, expected: string) => {
+export const verify4DigitNumber = (input: string, expected: string) => {
   if (!/^[0-9]{4}$/.test(input)) {
     return null;
   }

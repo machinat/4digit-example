@@ -1,16 +1,16 @@
-import Machinat from '@machinat/core';
-import Http from '@machinat/http';
-import Script from '@machinat/script';
-import Messenger from '@machinat/messenger';
-import MessengerAuth from '@machinat/messenger/webview';
-import Line from '@machinat/line';
-import LineAuth from '@machinat/line/webview';
-import Telegram from '@machinat/telegram';
-import TelegramAuth from '@machinat/telegram/webview';
-import Webview from '@machinat/webview';
-import DialogFlow from '@machinat/dialogflow';
-import RedisState from '@machinat/redis-state';
-import { FileState } from '@machinat/dev-tools';
+import Sociably from '@sociably/core';
+import Http from '@sociably/http';
+import Script from '@sociably/script';
+import Messenger from '@sociably/messenger';
+import MessengerAuth from '@sociably/messenger/webview';
+import Line from '@sociably/line';
+import LineAuth from '@sociably/line/webview';
+import Telegram from '@sociably/telegram';
+import TelegramAuth from '@sociably/telegram/webview';
+import Webview from '@sociably/webview';
+import DialogFlow from '@sociably/dialogflow';
+import RedisState from '@sociably/redis-state';
+import { FileState } from '@sociably/dev-tools';
 import nextConfigs from '../webview/next.config.js';
 import recognitionData from './recognitionData';
 import useIntent from './service/useIntent';
@@ -56,7 +56,7 @@ type CreateAppOptions = {
 };
 
 const createApp = (options?: CreateAppOptions) => {
-  return Machinat.createApp({
+  return Sociably.createApp({
     modules: [
       Http.initModule({
         noServer: options?.noServer,
@@ -82,7 +82,7 @@ const createApp = (options?: CreateAppOptions) => {
       DialogFlow.initModule({
         recognitionData,
         projectId: DIALOG_FLOW_PROJECT_ID,
-        environment: `digits-example-${DEV ? 'dev' : 'prod'}`,
+        environment: `sociably-4digit-game-${DEV ? 'dev' : 'prod'}`,
         clientOptions: GOOGLE_APPLICATION_CREDENTIALS
           ? undefined
           : {
@@ -128,7 +128,7 @@ const createApp = (options?: CreateAppOptions) => {
         authPlatforms: [MessengerAuth, TelegramAuth, LineAuth],
         basicAuth: {
           appName: APP_NAME,
-          appIconUrl: 'https://machinat.com/img/logo.jpg',
+          appIconUrl: 'https://sociably.js.org/img/logo.jpg',
         },
 
         noNextServer: options?.noServer,

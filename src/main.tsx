@@ -1,7 +1,7 @@
-import { makeContainer, StateController } from '@machinat/core';
-import Script from '@machinat/script';
-import { Stream } from '@machinat/stream';
-import { filter } from '@machinat/stream/operators';
+import { makeContainer, StateController } from '@sociably/core';
+import Script from '@sociably/script';
+import { Stream } from '@sociably/stream';
+import { filter } from '@sociably/stream/operators';
 import handleMessage from './handlers/handleMessage';
 import handlePostback from './handlers/handlePostback';
 import handleWebview from './handlers/handleWebview';

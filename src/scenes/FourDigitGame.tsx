@@ -1,7 +1,10 @@
-import Machinat, { makeContainer } from '@machinat/core';
-import { build } from '@machinat/script';
-import * as $ from '@machinat/script/keywords';
-import { generate4Digits, verify4Digit } from '../utils/4digits';
+import Sociably, { makeContainer } from '@sociably/core';
+import { build } from '@sociably/script';
+import * as $ from '@sociably/script/keywords';
+import {
+  create4DigitNumber,
+  verify4DigitNumber,
+} from '../utils/fourDigitNumber';
 import useIntent from '../service/useIntent';
 import WithReplies from '../components/WithReplies';
 import { GameRecord, ChatEventContext } from '../types';
@@ -18,7 +21,7 @@ export default build<GameVars, ChatEventContext, void, null | GameRecord>(
   {
     name: 'FourDigitGame',
     initVars: () => ({
-      answer: generate4Digits(),
+      answer: create4DigitNumber(),
       inputs: [],
       startAt: Date.now(),
       result: null,
@@ -38,7 +41,7 @@ export default build<GameVars, ChatEventContext, void, null | GameRecord>(
             async ({ vars }, { event }) => {
               const result =
                 event.type === 'text'
-                  ? verify4Digit(event.text, vars.answer)
+                  ? verify4DigitNumber(event.text, vars.answer)
                   : null;
 
               if (!result) {

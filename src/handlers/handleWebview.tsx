@@ -1,4 +1,4 @@
-import { makeContainer, StateController } from '@machinat/core';
+import { makeContainer, StateController } from '@sociably/core';
 import { WebAppEventContext, GameRecordsState } from '../types';
 
 const handleWebview = makeContainer({ deps: [StateController] })(
